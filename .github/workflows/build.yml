@@ -1,0 +1,64 @@
+name: Build APK
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Unpack project
+        run: |
+          rm -rf app && mkdir app
+          base64 -d project.b64 | tar -xJ -C app
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: 21
+
+      - uses: android-actions/setup-android@v3
+
+      - uses: gradle/actions/setup-gradle@v4
+        with:
+          gradle-version: '8.14.3'
+
+      - name: Install and build web app
+        working-directory: app
+        run: |
+          npm ci
+          npm test
+          npm run build
+          npx cap sync android
+
+      - name: Build APK
+        working-directory: app/android
+        run: |
+          gradle assembleRelease --no-daemon --stacktrace
+
+      - name: Rename APK
+        run: cp app/android/app/build/outputs/apk/release/app-release.apk DigisellerManager.apk
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: DigisellerManager
+          path: DigisellerManager.apk
+
+      - name: Publish release
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          gh release create "v1.0.${{ github.run_number }}" DigisellerManager.apk \
+            --title "Digiseller Manager v1.0.${{ github.run_number }}" \
+            --notes "APK build ${{ github.run_number }}" --latest
