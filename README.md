@@ -1,2 +1,7 @@
-# digiseller-manager
-Digiseller Manager - Kurdish Android app. Download the APK from Releases.
+# Digiseller Manager
+
+بەرنامەیەکی ئەندرۆید بە کوردی بۆ بەڕێوەبردنی فرۆشگای Digiseller: ئامار، فرۆشتن، چات، کۆگا، گۆڕینی ئەکاونت بە یەک کلیک و نۆتیفیکەیشن.
+
+- APK دوایین وەشان: بەشی **Releases**
+- هەموو سەرچاوەکە لە `project.zip` دایە؛ GitHub Actions خۆکارانە APK دروست دەکات.
+- هیچ کلیلێکی API لێرە نییە. کلیلەکە لە ناو بەرنامەکەدا، لەسەر مۆبایل، دەنووسرێت.
